@@ -12,10 +12,10 @@
   - [ ] Upload config (file types, max size, etc.)
 
 ## ✅ Upload API
-- [ ] `POST /api/upload-url` (via tRPC or REST)
-  - [ ] Validates project + file
-  - [ ] Generates pre-signed S3 URL
-  - [ ] Returns URL + key
+- [x] `POST /api/upload-url` (via tRPC or REST)
+  - [x] Validates project + file
+  - [x] Generates pre-signed S3 URL
+  - [x] Returns URL + key
 - [ ] `POST /api/upload-complete`
   - [ ] Saves file metadata to DB
   - [ ] Associates upload with project
