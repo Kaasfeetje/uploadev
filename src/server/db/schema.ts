@@ -4,6 +4,7 @@
 import {
   pgTable,
   pgTableCreator,
+  text,
   timestamp,
   uuid,
   varchar,
@@ -21,5 +22,6 @@ export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   clerkId: varchar("clerk_id").notNull().unique(),
   email: varchar("email", { length: 256 }).notNull(),
+  imageUrl: text("image_url").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });

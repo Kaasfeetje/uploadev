@@ -2,7 +2,7 @@
 
 ## ✅ Auth & User System
 - [x] Auth setup (Clerk, Auth.js, or custom)
-- [ ] Create user on signup (store in DB)
+- [x] Create user on signup (store in DB)
 
 ## ✅ Project Management
 - [ ] Users can create/delete Projects
