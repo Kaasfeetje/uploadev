@@ -1,16 +1,21 @@
 import AuthButton from "@/modules/auth/ui/AuthButton";
-import { api, HydrateClient } from "@/trpc/server";
+import CallToAction from "@/modules/home/ui/CallToAction";
+import FeaturesSection from "@/modules/home/ui/FeaturesSection";
+import Footer from "@/modules/home/ui/Footer";
+import LandingHero from "@/modules/home/ui/LandingHero";
+import Navbar from "@/modules/home/ui/Navbar";
+import { HydrateClient } from "@/trpc/server";
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
-
-  void api.post.getLatest.prefetch();
-
   return (
     <HydrateClient>
+      <Navbar />
       <main>
-        <AuthButton />
+        <LandingHero />
+        <FeaturesSection />
+        <CallToAction />
       </main>
+      <Footer />
     </HydrateClient>
   );
 }
