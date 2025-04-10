@@ -1,7 +1,7 @@
 # 🚀 Phase 1: MVP Core (Goal: Uploads working, admin UI working)
 
 ## ✅ Auth & User System
-- [ ] Auth setup (Clerk, Auth.js, or custom)
+- [x] Auth setup (Clerk, Auth.js, or custom)
 - [ ] Create user on signup (store in DB)
 
 ## ✅ Project Management
