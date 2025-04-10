@@ -1,4 +1,3 @@
-import AuthButton from "@/modules/auth/ui/AuthButton";
 import CallToAction from "@/modules/home/ui/CallToAction";
 import FeaturesSection from "@/modules/home/ui/FeaturesSection";
 import Footer from "@/modules/home/ui/Footer";

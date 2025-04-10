@@ -5,7 +5,7 @@
 - [x] Create user on signup (store in DB)
 
 ## ✅ Project Management
-- [ ] Users can create/delete Projects
+- [x] Users can create/delete Projects
 - [ ] Each Project gets:
   - [ ] A unique ID
   - [ ] Public + secret API keys
