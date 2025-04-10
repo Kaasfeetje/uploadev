@@ -13,6 +13,10 @@ export const env = createEnv({
       .default("development"),
     CLERK_SECRET_KEY:z.string(),
     CLERK_WEBHOOK_SIGNING_SECRET:z.string(),
+    AWS_ACCESS_KEY_ID:z.string(),
+    AWS_SECRET_ACCESS_KEY:z.string(),
+    AWS_REGION:z.string(),
+    S3_BUCKET_NAME:z.string(),
   },
 
   /**
@@ -46,6 +50,11 @@ export const env = createEnv({
     NEXT_PUBLIC_CLERK_SIGN_UP_URL:process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL,
     NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL:process.env.NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL,
     NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL:process.env.NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL,
+
+    AWS_ACCESS_KEY_ID:process.env.AWS_ACCESS_KEY_ID,
+    AWS_SECRET_ACCESS_KEY:process.env.AWS_SECRET_ACCESS_KEY,
+    AWS_REGION:process.env.AWS_REGION,
+    S3_BUCKET_NAME:process.env.S3_BUCKET_NAME
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

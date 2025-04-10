@@ -37,34 +37,30 @@ export const projects = pgTable("projects", {
   userId: uuid("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
+  apiKeyId: uuid("api_key_id")
+    .references(() => apiKeys.id, { onDelete: "cascade" })
+    .notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").default(
     sql`CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)`,
   ),
 });
 
-export const projectsRelations = relations(projects, ({ one, many }) => ({
+export const projectsRelations = relations(projects, ({ one }) => ({
   user: one(users, {
     fields: [projects.userId],
     references: [users.id],
   }),
-  apiKeys: many(apiKeys),
+  apiKey: one(apiKeys, {
+    fields: [projects.apiKeyId],
+    references: [apiKeys.id],
+  }),
 }));
 
 export const apiKeys = pgTable("apiKeys", {
   id: uuid("id").primaryKey().defaultRandom(),
   key: varchar("key", { length: 64 }).notNull().unique(),
-  projectId: uuid("project_id")
-    .references(() => projects.id, { onDelete: "cascade" })
-    .notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   expiresAt: timestamp("expires_at"),
   status: varchar("status", { length: 50 }).default("active").notNull(),
 });
-
-export const apiKeysRelations = relations(apiKeys, ({ one }) => ({
-  project: one(projects, {
-    fields: [apiKeys.projectId],
-    references: [projects.id],
-  }),
-}));

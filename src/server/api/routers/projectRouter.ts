@@ -22,24 +22,33 @@ export const projectRouter = createTRPCRouter({
       }
 
       const newProject = await ctx.db.transaction(async (trx) => {
+        const [apiKey] = await trx
+          .insert(apiKeys)
+          .values({ key: generateApiKey() })
+          .returning();
+
+        if (!apiKey) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Something went wrong creating the API key.",
+          });
+        }
+
         const [project] = await trx
           .insert(projects)
           .values({
             name: input.name,
             userId: user[0]!.id,
+            apiKeyId: apiKey.id,
           })
           .returning();
 
         if (!project) {
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
-            message: "Something went wrong creating the project and API key.",
+            message: "Something went wrong creating the project.",
           });
         }
-
-        await trx
-          .insert(apiKeys)
-          .values({ projectId: project.id, key: generateApiKey() });
 
         return project;
       });
