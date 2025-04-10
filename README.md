@@ -7,8 +7,8 @@
 ## ✅ Project Management
 - [x] Users can create/delete Projects
 - [ ] Each Project gets:
-  - [ ] A unique ID
-  - [ ] Public + secret API keys
+  - [x] A unique ID
+  - [X] Secret API key
   - [ ] Upload config (file types, max size, etc.)
 
 ## ✅ Upload API

@@ -1,7 +1,7 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   pgTable,
   pgTableCreator,
@@ -34,14 +34,37 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const projects = pgTable("projects", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name").notNull().unique(),
-  userId: uuid("user_id").references(() => users.id),
+  userId: uuid("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedAt: timestamp("updated_at").default(
+    sql`CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)`,
+  ),
 });
 
-export const projectsRelations = relations(projects, ({ one }) => ({
+export const projectsRelations = relations(projects, ({ one, many }) => ({
   user: one(users, {
     fields: [projects.userId],
     references: [users.id],
+  }),
+  apiKeys: many(apiKeys),
+}));
+
+export const apiKeys = pgTable("apiKeys", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  key: varchar("key", { length: 64 }).notNull().unique(),
+  projectId: uuid("project_id")
+    .references(() => projects.id, { onDelete: "cascade" })
+    .notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  expiresAt: timestamp("expires_at"),
+  status: varchar("status", { length: 50 }).default("active").notNull(),
+});
+
+export const apiKeysRelations = relations(apiKeys, ({ one }) => ({
+  project: one(projects, {
+    fields: [apiKeys.projectId],
+    references: [projects.id],
   }),
 }));

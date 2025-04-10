@@ -1,9 +1,10 @@
-import { projects, users } from "@/server/db/schema";
+import { apiKeys, projects, users } from "@/server/db/schema";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { eq } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { zProjectSchema } from "@/lib/validation";
 import { z } from "zod";
+import crypto from "crypto";
 
 export const projectRouter = createTRPCRouter({
   create: protectedProcedure
@@ -19,13 +20,29 @@ export const projectRouter = createTRPCRouter({
           message: "Could not find user.",
         });
       }
-      const [newProject] = await ctx.db
-        .insert(projects)
-        .values({
-          name: input.name,
-          userId: user[0].id,
-        })
-        .returning();
+
+      const newProject = await ctx.db.transaction(async (trx) => {
+        const [project] = await trx
+          .insert(projects)
+          .values({
+            name: input.name,
+            userId: user[0]!.id,
+          })
+          .returning();
+
+        if (!project) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Something went wrong creating the project and API key.",
+          });
+        }
+
+        await trx
+          .insert(apiKeys)
+          .values({ projectId: project.id, key: generateApiKey() });
+
+        return project;
+      });
 
       return newProject;
     }),
@@ -39,3 +56,8 @@ export const projectRouter = createTRPCRouter({
       return { projectId: input.projectId };
     }),
 });
+
+const generateApiKey = () => {
+  const key = crypto.randomBytes(32).toString("hex"); // Generates a 64-character hexadecimal string
+  return `up_${key.slice(0, 61)}`;
+};
