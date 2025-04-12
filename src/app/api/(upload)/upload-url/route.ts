@@ -1,7 +1,7 @@
 // pages/api/upload-url.ts
 import { env } from "@/env";
 import { db } from "@/server/db";
-import { apiKeys, projects } from "@/server/db/schema";
+import { apiKeys, files, projects } from "@/server/db/schema";
 import {
   PutObjectCommand,
   S3Client,
@@ -24,12 +24,14 @@ const s3 = new S3Client(config);
 
 // Validation schema
 const bodySchema = z.object({
-  projectId: z.string(),
   filename: z.string(),
   contentType: z.string(),
+  size: z.number(),
 });
+
 export async function POST(req: NextRequest) {
   try {
+    // TODO: extract this to middleware
     const apiKeyHeader = req.headers.get("x-api-key");
     if (!apiKeyHeader) {
       return NextResponse.json({ error: "Missing API key" }, { status: 401 });
@@ -40,7 +42,7 @@ export async function POST(req: NextRequest) {
     )[0];
 
     if (!apiKey) {
-      return NextResponse.json({ error: "Invalid API key" }, { status: 403 });
+      return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
     }
 
     const project = (
@@ -50,7 +52,7 @@ export async function POST(req: NextRequest) {
     if (!project) {
       return NextResponse.json(
         { error: "Could not find project" },
-        { status: 403 },
+        { status: 400 },
       );
     }
 
@@ -62,7 +64,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { filename, contentType } = parsed.data;
+    const { filename, contentType, size } = parsed.data;
     const key = `uploads/${project.id}/${Date.now()}_${filename}`;
 
     const command = new PutObjectCommand({
@@ -72,6 +74,14 @@ export async function POST(req: NextRequest) {
     });
 
     const url = await getSignedUrl(s3, command, { expiresIn: 60 * 5 });
+
+    await db.insert(files).values({
+      contentType,
+      filename,
+      key,
+      projectId: project.id,
+      size,
+    });
 
     return NextResponse.json({ url, key });
   } catch (err) {

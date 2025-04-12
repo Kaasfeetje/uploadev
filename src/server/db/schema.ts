@@ -1,8 +1,10 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import {
+  integer,
+  pgEnum,
   pgTable,
   pgTableCreator,
   text,
@@ -18,6 +20,16 @@ import {
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
 export const createTable = pgTableCreator((name) => `uploadev_${name}`);
+
+// Enums
+export const statusEnum = pgEnum("status", [
+  "pending",
+  "success",
+  "failed",
+  "canceled",
+]);
+
+//Tables
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -41,9 +53,7 @@ export const projects = pgTable("projects", {
     .references(() => apiKeys.id, { onDelete: "cascade" })
     .notNull(),
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").default(
-    sql`CURRENT_TIMESTAMP(3) on update CURRENT_TIMESTAMP(3)`,
-  ),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const projectsRelations = relations(projects, ({ one }) => ({
@@ -64,3 +74,24 @@ export const apiKeys = pgTable("apiKeys", {
   expiresAt: timestamp("expires_at"),
   status: varchar("status", { length: 50 }).default("active").notNull(),
 });
+
+export const files = pgTable("files", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  projectId: uuid("project_id").references(() => projects.id, {
+    onDelete: "set null",
+  }),
+  key: varchar("key", { length: 512 }),
+  filename: varchar("filename", { length: 255 }),
+  size: integer(),
+  status: statusEnum("status").notNull().default("pending"),
+  contentType: varchar("contentType", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const filesRelations = relations(files, ({ one }) => ({
+  project: one(projects, {
+    fields: [files.projectId],
+    references: [projects.id],
+  }),
+}));
