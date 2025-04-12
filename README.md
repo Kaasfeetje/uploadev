@@ -8,7 +8,7 @@
 - [x] Users can create/delete Projects
 - [ ] Each Project gets:
   - [x] A unique ID
-  - [X] Secret API key
+  - [x] Secret API key
   - [ ] Upload config (file types, max size, etc.)
 
 ## ✅ Upload API
@@ -16,9 +16,9 @@
   - [x] Validates project + file
   - [x] Generates pre-signed S3 URL
   - [x] Returns URL + key
-- [ ] `POST /api/upload-complete`
+- [x] `POST /api/upload-complete`
   - [ ] Saves file metadata to DB
-  - [ ] Associates upload with project
+  - [x] Associates upload with project
 
 ## ✅ S3 Setup
 - [ ] S3 bucket (or R2/Supabase)
@@ -26,7 +26,7 @@
 - [ ] `@aws-sdk/s3` set up for signed URLs
 
 ## ✅ Admin Dashboard (Next.js + tRPC)
-- [ ] Project list + create UI
+- [x] Project list + create UI
 - [ ] Project detail page
   - [ ] View API keys
   - [ ] Regenerate keys
