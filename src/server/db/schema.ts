@@ -76,18 +76,21 @@ export const apiKeys = pgTable("apiKeys", {
 });
 
 export const files = pgTable("files", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  projectId: uuid("project_id").references(() => projects.id, {
-    onDelete: "set null",
-  }),
-  key: varchar("key", { length: 512 }),
-  filename: varchar("filename", { length: 255 }),
-  size: integer(),
-  status: statusEnum("status").notNull().default("pending"),
-  contentType: varchar("contentType", { length: 255 }),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  id: uuid("id").primaryKey().defaultRandom().notNull(),
+  projectId: uuid("project_id")
+    .references(() => projects.id, {
+      onDelete: "set null",
+    })
+    .notNull(),
+  key: varchar("key", { length: 512 }).notNull(),
+  filename: varchar("filename", { length: 255 }).notNull(),
+  size: integer().notNull(),
+  status: statusEnum("status").notNull().default("pending").notNull(),
+  contentType: varchar("contentType", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+export type FileType = typeof files.$inferSelect;
 
 export const filesRelations = relations(files, ({ one }) => ({
   project: one(projects, {

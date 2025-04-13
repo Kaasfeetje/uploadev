@@ -31,7 +31,7 @@
   - [ ] View API keys
   - [ ] Regenerate keys
   - [ ] Configure upload settings
-- [ ] Upload logs (list of uploaded files)
+- [x] Uploaded files (data)
 
 ## ✅ Client SDK / Dev Integration
 - [ ] Simple `UploadButton` component
