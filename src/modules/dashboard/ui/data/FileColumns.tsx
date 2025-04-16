@@ -30,6 +30,19 @@ export const columns: ColumnDef<FileType>[] = [
     maxSize: 24,
   },
   {
+    accessorKey: "key",
+    header: "Image",
+    cell: ({ row }) => (
+      <img
+        className="h-10 w-10 object-contain"
+        src={`https://d1fu8ynlqto67m.cloudfront.net/${String(row.getValue("key"))}`}
+        alt="Preview image"
+      />
+    ),
+    maxSize: 24,
+    enableSorting: false,
+  },
+  {
     accessorKey: "filename",
     header: "Filename",
     enableSorting: true,
